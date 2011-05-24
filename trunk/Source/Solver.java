@@ -10,8 +10,17 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Random;
 
-import jp.ac.kobe_u.cs.cream.*;
-
+import JaCoP.constraints.Sum;
+import JaCoP.constraints.XeqC;
+import JaCoP.core.BooleanVar;
+import JaCoP.core.IntVar;
+import JaCoP.core.Store;
+import JaCoP.search.DepthFirstSearch;
+import JaCoP.search.IndomainMin;
+import JaCoP.search.Search;
+import JaCoP.search.SelectChoicePoint;
+import JaCoP.search.SimpleMatrixSelect;
+import JaCoP.search.SmallestDomain;
 
 
 public class Solver {
@@ -24,53 +33,80 @@ public class Solver {
 	public ArrayList<Coordinate> movesList = new ArrayList<Coordinate>();
 	public ArrayList<Coordinate> flagList = new ArrayList<Coordinate>();
 	private static Random randomNumberGenerator = new Random();
+	
+	// JaCoP
+	Store store;
+	public static int U = -1; // Unknown Square
+    IntVar[][] map; // 0 through 8
+    IntVar[][] mines; // MINE or NOT MINE
+    int[][] problem = null;
 
-	Network net;
-	IntDomain d;
-	IntDomain d1;
-	IntVariable[][] variableMap;
-	IntVariable[][] valueMap;
-
-	public Solver(char[][] mfield, int row, int col, ArrayList<Coordinate> mlist) {
+	public Solver(char[][] mfield, int r, int c, ArrayList<Coordinate> mlist) {
 		minefield = mfield;
-		numRows = row;
-		numCols = col;
+		numRows = r;
+		numCols = c;
 		minesList = mlist;
+		
+		buildModel();
+		printProblem();
+	}
+	
+	public void buildModel() {
+		int r = numRows;
+		int c = numCols;
+		problem = new int[r][c];
+		
+		for(int i = 0; i < r; i++) {
+            for(int j = 0; j < c; j++) {
+            	problem[i][j] = U;
+            }
+        }
+		
+		store = new Store();
 
-		net = new Network();
-		d = new IntDomain(0,1);
-		d1 = new IntDomain(0,8);
-		variableMap = new IntVariable[numRows][numCols];
-		valueMap = new IntVariable[numRows][numCols];
-		for(int i = 0; i < numRows; i++) {
-			for(int j = 0; j < numCols; j++) {
-				variableMap[i][j] = new IntVariable(net, d1);
-			}
-		}
-		
-		for(int i = 0; i < numRows; i++) {
-			for(int j = 0; j < numCols; j++) {
-				valueMap[i][j] = new IntVariable(net, d);
-			}
-		}
-		
-		for(int i = 0; i < numRows; i++) {
-			for(int j = 0; j < numCols; j++) {
-				if (i != 0 && i != numRows-1 && j != 0 && j != numCols-1) {
-					variableMap[i][j+1].add(
-							variableMap[i][j-1]).add(
-									variableMap[i+1][j+1]).add(
-											variableMap[i+1][j-1]).add(
-													variableMap[i+1][j]).add(
-															variableMap[i-1][j+1]).add(
-																	variableMap[i-1][j-1]).add(
-																			variableMap[i-1][j]).equals(valueMap[i][j]);
-				}
-			}
-		}
-		
+        // Constraint Variables
+        mines = new IntVar[r][c];
+        map = new IntVar[r][c];
+        for(int i = 0; i < r; i++) {
+            for(int j = 0; j < c; j++) {
+                // 0: no mine, 1: mine
+                mines[i][j] = new BooleanVar(store, "m(" + i + "," + j + ")");
+                // mirrors the minefield matrix
+                map[i][j] = new IntVar(store, "g_" + i + "_" + j, -1, 8);
+            }
+        }
 	}
 
+	public void propConstraints() {
+		int r = numRows;
+		int c = numCols;
+		 // Add the constraints
+        for(int i = 0; i < r; i++) {
+            for(int j = 0; j < c; j++) {
+
+                // This is a known value of neighbors
+                if (problem[i][j] > U) {
+
+                    // mirroring the problem matrix.
+                    store.impose(new XeqC(map[i][j], problem[i][j]));
+
+                    // This could not be a mine.
+                    store.impose(new XeqC(mines[i][j], 0));
+
+                    ArrayList<IntVar> lst = new ArrayList<IntVar>();
+                    for(int a = -1; a <= 1; a++) {
+                        for(int b = -1; b <= 1; b++) {
+                            if (i+a >= 0 && j+b >= 0 && i+a < r && j+b < c) {
+                                lst.add(mines[i+a][j+b]);
+                            }
+                        }                        
+                    }
+                    store.impose(new Sum(lst, map[i][j]));
+                }
+            }
+        }
+	}
+	
 	public void uncover(int row, int col) {
 		Coordinate move = new Coordinate(row,col);
 		if (!movesList.contains(move)) 
@@ -118,8 +154,11 @@ public class Solver {
 					uncover(row-1, col); // up
 				}
 			}
-			System.out.println("Selected (" + row + ", " + col + "): " + value);
+			problem[row][col] = Character.getNumericValue(value);
+			propConstraints();
+			System.out.println("Selected (" + row + ", " + col + "): " + value + "Problem: " + problem[row][col]);
 			printCurrentMap();
+			printProblem();
 		}
 	} // end of uncover
 
@@ -142,49 +181,62 @@ public class Solver {
 		int y = GetRandomInt(0, numCols - 1);
 		uncover(x,y);
 	}
-
-	public void solver() {
+	
+	public void randomSolver() {
 		int currentMoveIndex = 0;
 
-		int row = -1;
-		int col = -1;
-
-		//randomMove();
-		//while (movesList.size() > currentMoveIndex && GAME_OVER == false) {
-		while (movesList.size() > currentMoveIndex) {
-			Coordinate move = movesList.get(currentMoveIndex);
-			row = move.getRow();
-			col = move.getCol();
-			if (minefield[row][col] != 'X' && row != 0 && row != numRows-1 && col != 0 && col != numCols-1) {
-				int sum = minefield[row][col];
-				variableMap[row][col].equals(0);
-				valueMap[row][col].equals(sum);
-			}
+		randomMove();
+		while (movesList.size() > currentMoveIndex && GAME_OVER == false) {
 			currentMoveIndex++;
-			//System.out.println("LOOP");
-			//randomMove();
-		}
-
-		DefaultSolver solver = new DefaultSolver(net);
-    	for (solver.start(); solver.waitNext(); solver.resume()) {
-    		Solution solution = solver.getSolution();
-    		for (int i = 0; i < numRows; i++) {
-    			for (int j = 0; j < numCols; j++) {
-    				System.out.print(solution.getIntValue(variableMap[i][j]) + " ");
-    			}
-    			System.out.println();	
-    		}
-    		System.out.println();
-    	}
-    	solver.stop();
-  
-    	
-    	System.out.println(net.getVariables());
-		System.out.println(net.getConstraints());
+			randomMove();
+			System.out.println(currentMoveIndex);
+		}  
 	}
 
-	public void printCurrentMap()
-	{
+	public void solver(boolean recordSolutions) {
+		
+	    SelectChoicePoint select = new SimpleMatrixSelect (mines, new SmallestDomain(), new IndomainMin());
+	    
+	    Search search = new DepthFirstSearch();
+	    search.getSolutionListener().searchAll(true);
+	    search.getSolutionListener().recordSolutions(recordSolutions);        
+	    
+	    boolean result = search.labeling(store, select);
+	    
+	    int numSolutions = search.getSolutionListener().solutionsNo();
+	    
+	    if (result) {
+	
+	        if (numSolutions <= 20) {
+	            search.printAllSolutions();
+	        } else {
+	            System.out.println("Too many solutions to print...");
+	        }
+	
+	        if (numSolutions > 1)
+	        	System.out.println("\nThe last solution:");
+	        else
+	        	System.out.println("\nThe solution:");
+	        
+	        for(int i = 0; i < numRows; i++) {
+	            for(int j = 0; j < numCols; j++) {
+	                System.out.print(mines[i][j].value() + " ");
+	            }
+	            System.out.println();
+	        }
+	
+	        //System.out.println("numSolutions: " + numSolutions);
+	
+	    } else {
+	
+	        System.out.println("No solutions.");
+	
+	    } // end if result
+	
+	
+	} // end search
+
+	public void printCurrentMap() {
 		System.out.println("Current Minesweeper Field");
 		System.out.println("***************************");
 
@@ -211,6 +263,30 @@ public class Solver {
 		}		
 		System.out.println("");
 	}
+	
+	public void printProblem() {
+		System.out.println("Problem MATRIX");
+		for(int i = 0; i < numRows; i++) {
+            for(int j = 0; j < numCols; j++) {
+            	System.out.print(problem[i][j] + " ");
+            }
+            System.out.println();
+        }
+//		System.out.println("Problem MAP");
+//		for(int i = 0; i < numRows; i++) {
+//            for(int j = 0; j < numCols; j++) {
+//            	System.out.print(map[i][j] + " ");
+//            }
+//            System.out.println();
+//        }
+//		System.out.println("Problem MINES");
+//		for(int i = 0; i < numRows; i++) {
+//            for(int j = 0; j < numCols; j++) {
+//            	System.out.print(mines[i][j] + " ");
+//            }
+//            System.out.println();
+//        }
+	}
 
 	public boolean IsIndexValid(int row, int col)
 	{
@@ -223,35 +299,6 @@ public class Solver {
 			return false;
 	}
 
-	//	private ArrayList<IntVariable> findAdjacentSquares(int row, int col) {
-	//		ArrayList<IntVariable> adjacentSquares = new ArrayList<IntVariable>();
-	//		if (IsIndexValid(row, col+1)) {
-	//			adjacentSquares.add(variableMap[row][col+1]); // right
-	//		}
-	//		if (IsIndexValid(row, col-1)) {
-	//			adjacentSquares.add(variableMap[row][col-1]); // left
-	//		}
-	//		if (IsIndexValid(row+1, col+1)) {
-	//			adjacentSquares.add(variableMap[row+1][col+1]); // down right
-	//		}
-	//		if (IsIndexValid(row+1, col-1)) {
-	//			adjacentSquares.add(variableMap[row+1][col-1]); // down left
-	//		}
-	//		if (IsIndexValid(row+1, col)) {
-	//			adjacentSquares.add(variableMap[row+1][col]); // down	
-	//		}
-	//		if (IsIndexValid(row-1, col+1)) {
-	//			adjacentSquares.add(variableMap[row-1][col+1]); // up right
-	//		}
-	//		if (IsIndexValid(row-1, col-1)) {
-	//			adjacentSquares.add(variableMap[row-1][col-1]); // up left
-	//		}
-	//		if (IsIndexValid(row-1, col)) {
-	//			adjacentSquares.add(variableMap[row-1][col]); // up
-	//		}
-	//		return adjacentSquares;
-	//	}
-
 	private int GetRandomInt(int start, int finish)
 	{
 		int n = finish - start + 1;
@@ -263,7 +310,7 @@ public class Solver {
 		return start + i;
 	}
 
-	private void play() throws NumberFormatException, IOException {
+	void play() throws NumberFormatException, IOException {
 		BufferedReader reader;
 		reader = new BufferedReader(new InputStreamReader(System.in));
 
@@ -271,7 +318,8 @@ public class Solver {
 			System.out.println("Press '1' to uncover a square");
 			System.out.println("Press '2' to flag a mine");
 			System.out.println("Press '3' to uncover a random square");
-			System.out.println("Press '4' to use the solver");
+			System.out.println("Press '4' to use the random solver");
+			System.out.println("Press '5' to use the brute force solver");
 			System.out.print("Select Choice: ");
 			int choice = Integer.parseInt(reader.readLine());
 
@@ -292,8 +340,15 @@ public class Solver {
 				flagMine(r,c);
 			} else if (choice == 3) {
 				randomMove();
+			} else if (choice == 4) {
+				randomSolver();
 			} else {
-				solver();
+				long T1, T2, T;
+				T1 = System.currentTimeMillis();
+				solver(true);
+		        T2 = System.currentTimeMillis();
+				T = T2 - T1;
+				System.out.println("\n\t*** Execution time = " + T + " ms");
 			}
 		}
 	}
