@@ -1,7 +1,7 @@
 // **************************************
 // Class: Generator.java
 // Code author: David Nguyen
-// Last modified: 05/19/2011
+// Last modified: 05/24/2011
 // **************************************
 
 import java.io.BufferedReader;
@@ -23,9 +23,9 @@ public class Generator
 	static int MIN_NUM_COLS = 1;
 	static int MAX_NUM_COLS = 30;
 	
-	static double CLUSTERED_FIELD_RATIO_OF_MINES = 0.20; 
-	static double RANDOM_FIELD_RATIO_OF_MINES = 0.20; 
-	static double SCATTERED_FIELD_RATIO_OF_MINES = 0.18; // must be <= 18% else hard mode hangs since it's possible to
+	static double CLUSTERED_FIELD_MINE_RATIO = 0.20; 
+	static double RANDOM_FIELD_MINE_RATIO = 0.20; 
+	static double SCATTERED_FIELD_MINE_RATIO = 0.18; // must be <= 18% else hard mode hangs since it's possible to
 										   		   // have n-1 mines on the board and not be able to add the final
 										   		   // mine w/o ruining the hard property of a sparse mine field
 	static final char mineChar = 'X'; 
@@ -69,7 +69,7 @@ public class Generator
 
 		if(gameMode == 1)
 		{
-			this.numMines = (int)(numRows*numCols*(CLUSTERED_FIELD_RATIO_OF_MINES));
+			this.numMines = (int)(numRows*numCols*(CLUSTERED_FIELD_MINE_RATIO));
 			if(-1 == FillMineFieldWithClusters())
 			{
 				System.out.println("Error in FillMineFieldWithClusters");
@@ -78,7 +78,7 @@ public class Generator
 		}
 		else if (gameMode == 2)
 		{
-			this.numMines = (int)(numRows*numCols*(RANDOM_FIELD_RATIO_OF_MINES));
+			this.numMines = (int)(numRows*numCols*(RANDOM_FIELD_MINE_RATIO));
 			if(-1 == FillMineFieldRandomly())
 			{
 				System.out.println("Error in FillMineFieldRandomly");
@@ -87,7 +87,7 @@ public class Generator
 		}
 		else if(gameMode == 3)
 		{	
-			this.numMines = (int)(numRows*numCols*(SCATTERED_FIELD_RATIO_OF_MINES));
+			this.numMines = (int)(numRows*numCols*(SCATTERED_FIELD_MINE_RATIO));
 			if(-1 == FillMineFieldWithScatters())
 			{
 				System.out.println("Error in FillMineFieldWithScatters");
@@ -116,6 +116,43 @@ public class Generator
 		}
 	}
 
+	public Generator(int numRows, int numCols, int gameMode)
+	{
+		this.numRows = numRows;
+		this.numCols = numCols;
+		
+		minesList = new ArrayList<Coordinate>();
+		mineField = new char[numRows][numCols];	
+
+		if(gameMode == 1)
+		{
+			this.numMines = (int)(numRows*numCols*(CLUSTERED_FIELD_MINE_RATIO));
+			if(-1 == FillMineFieldWithClusters())
+			{
+				System.out.println("Error in FillMineFieldWithClusters");
+				System.exit(1);
+			}		
+		}
+		else if (gameMode == 2)
+		{
+			this.numMines = (int)(numRows*numCols*(RANDOM_FIELD_MINE_RATIO));
+			if(-1 == FillMineFieldRandomly())
+			{
+				System.out.println("Error in FillMineFieldRandomly");
+				System.exit(1);
+			}			
+		}
+		else if(gameMode == 3)
+		{	
+			this.numMines = (int)(numRows*numCols*(SCATTERED_FIELD_MINE_RATIO));
+			if(-1 == FillMineFieldWithScatters())
+			{
+				System.out.println("Error in FillMineFieldWithScatters");
+				System.exit(1);
+			}		
+		}		
+	}
+	
 	public int FillMineFieldWithClusters()
 	{
 		// if there are no rows and no cols
@@ -891,10 +928,11 @@ public class Generator
 		//Generator g = new Generator();
 		//Generator g = new Generator("sampleGame.txt");
 		
-		// can specify level of difficulty using parameter 1 = easy, 2 = medium, 3 = hard
-		Generator g = new Generator(1);		// easy
+		//Generator g = new Generator(1);		// easy
 		//Generator g = new Generator(2);		// medium
 		//Generator g = new Generator(3);		// hard
+		
+		Generator g = new Generator(8, 5, 2);
 
 		g.PrintMineField();			
 	} // end main
