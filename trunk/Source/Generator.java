@@ -922,6 +922,11 @@ public class Generator
 			}				
 		}		
 	}
+	
+	public char[][] getMineField()
+	{
+		return mineField;
+	}
 
 	public static void main(String[] args) 
 	{

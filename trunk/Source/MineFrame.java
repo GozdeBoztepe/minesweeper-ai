@@ -156,34 +156,60 @@ public class MineFrame extends JFrame
 	
 	public void generateGame()
 	{
+		ImageIcon blank = new ImageIcon("img/j0.gif");
+		ImageIcon one = new ImageIcon("img/j1.gif");
+		ImageIcon two = new ImageIcon("img/j2.gif");
+		ImageIcon three = new ImageIcon("img/j3.gif");
+		ImageIcon four = new ImageIcon("img/j4.gif");
+		ImageIcon five = new ImageIcon("img/j5.gif");
+		ImageIcon six = new ImageIcon("img/j6.gif");
+		ImageIcon seven = new ImageIcon("img/j7.gif");
+		ImageIcon eight = new ImageIcon("img/j8.gif");
+		ImageIcon mine = new ImageIcon("img/j9.gif");
+		ImageIcon unopened = new ImageIcon("img/j10.gif");
+		ImageIcon flag = new ImageIcon("img/j11.gif");
+		
+		Generator g = new Generator(20,20,2);
+		char[][] minefield = g.getMineField();
+		
+		int rows = minefield.length;
+		int cols = minefield[0].length;
+		
 		JPanel contentPane = new JPanel();
-        contentPane.setPreferredSize(new Dimension(500, 300));
+        contentPane.setPreferredSize(new Dimension(rows*16, cols*16));
 
-    contentPane.setLayout(new GridLayout(7, 2));
-    contentPane.add(new JButton("Button 1"));
-    contentPane.add(new JButton("Button 2"));
-    contentPane.add(new JButton("Button 3"));
-    contentPane.add(new JButton("Button 4"));
-    contentPane.add(new JButton("Button 5"));
-    contentPane.add(new JButton("Button 6"));
-    contentPane.add(new JButton("Button 7"));
-    contentPane.add(new JButton("Button 8"));
-    contentPane.add(new JButton("Button 1"));
-    contentPane.add(new JButton("Button 2"));
-    contentPane.add(new JButton("Button 3"));
-    contentPane.add(new JButton("Button 4"));
-    contentPane.add(new JButton("Button 5"));
-    contentPane.add(new JButton("Button 6"));
-    contentPane.add(new JButton("Button 7"));
-    contentPane.add(new JButton("Button 8"));
-    contentPane.add(new JButton("Button 1"));
-    contentPane.add(new JButton("Button 2"));
-    contentPane.add(new JButton("Button 3"));
-    contentPane.add(new JButton("Button 4"));
-    contentPane.add(new JButton("Button 5"));
-    contentPane.add(new JButton("Button 6"));
-    contentPane.add(new JButton("Button 7"));
-    contentPane.add(new JButton("Button 8"));
+		
+
+    contentPane.setLayout(new GridLayout(rows, cols));
+    
+    
+    for(int r=0; r < rows; ++r)
+			{
+				for(int c=0; c < cols; ++c)
+				{ 
+					if(minefield[r][c] == '0')
+						contentPane.add(new JLabel(blank));
+					else if(minefield[r][c] == '1')
+						contentPane.add(new JLabel(one));
+					else if(minefield[r][c] == '2')
+						contentPane.add(new JLabel(two));
+					else if(minefield[r][c] == '3')
+						contentPane.add(new JLabel(three));
+					else if(minefield[r][c] == '4')
+						contentPane.add(new JLabel(four));
+					else if(minefield[r][c] == '5')
+						contentPane.add(new JLabel(five));
+					else if(minefield[r][c] == '6')
+						contentPane.add(new JLabel(six));
+					else if(minefield[r][c] == '7')
+						contentPane.add(new JLabel(seven));
+					else if(minefield[r][c] == '8')
+						contentPane.add(new JLabel(eight));
+					else if(minefield[r][c] == 'X')
+						contentPane.add(new JLabel(mine));
+						//contentPane.add(new JButton(minefield[r][c] + " "));
+				}
+			}
 		
 		setContentPane(contentPane);
         pack();
@@ -210,7 +236,7 @@ class MinesweeperMenuBar extends JMenuBar
         JMenuItem menuItem;
 
         // Build the File menu.
-        fileMenu = new JMenu("File");
+        fileMenu = new JMenu("Actions");
         fileMenu.setMnemonic(KeyEvent.VK_F);
         add(fileMenu);
 
