@@ -62,8 +62,8 @@ public class Generator
 
 	public Generator(int gameMode)
 	{
-		this.numRows = GetRandomInt(MIN_NUM_ROWS, MAX_NUM_ROWS);
-		this.numCols = GetRandomInt(MIN_NUM_COLS, MAX_NUM_COLS);
+		this.numRows = getRandomInt(MIN_NUM_ROWS, MAX_NUM_ROWS);
+		this.numCols = getRandomInt(MIN_NUM_COLS, MAX_NUM_COLS);
 		minesList = new ArrayList<Coordinate>();
 		mineField = new char[numRows][numCols];	
 
@@ -174,115 +174,115 @@ public class Generator
 		while(minesList.size() != numMines)
 		{
 			int r,c;
-			Coordinate temp = new Coordinate(r = GetRandomInt(0, maxRowIndex), c = GetRandomInt(0, maxColIndex));
+			Coordinate temp = new Coordinate(r = getRandomInt(0, maxRowIndex), c = getRandomInt(0, maxColIndex));
 
 			if(!(minesList.contains(temp)))
 			{
 				minesList.add(temp);
-				mineField[temp.getRow()][temp.getCol()] = GetMineChar();
+				mineField[temp.getRow()][temp.getCol()] = getMineChar();
 
 				if(minesList.size() == numMines)
 					break;
 
 				// index to the left
-				if(true == IsIndexValid(r, c-1))
+				if(true == isIndexValid(r, c-1))
 				{
 					Coordinate tempAdj = new Coordinate(r, c-1);
 					if(!(minesList.contains(tempAdj)))
 					{
 						minesList.add(tempAdj);
-						mineField[r][c-1] = GetMineChar();
+						mineField[r][c-1] = getMineChar();
 
 						if(minesList.size() == numMines)
 							break;						
 					}
 				}
 				// index to the left and up one
-				if(true == IsIndexValid(r-1, c-1))
+				if(true == isIndexValid(r-1, c-1))
 				{
 					Coordinate tempAdj = new Coordinate(r-1, c-1);
 					if(!(minesList.contains(tempAdj)))
 					{
 						minesList.add(tempAdj);
-						mineField[r-1][c-1] = GetMineChar();
+						mineField[r-1][c-1] = getMineChar();
 
 						if(minesList.size() == numMines)
 							break;						
 					}			
 				}
 				// index above
-				if(true == IsIndexValid(r-1, c))
+				if(true == isIndexValid(r-1, c))
 				{
 					Coordinate tempAdj = new Coordinate(r-1, c);
 					if(!(minesList.contains(tempAdj)))
 					{
 						minesList.add(tempAdj);
-						mineField[r-1][c] = GetMineChar();
+						mineField[r-1][c] = getMineChar();
 
 						if(minesList.size() == numMines)
 							break;						
 					}			
 				}
 				// index above and to the right one
-				if(true == IsIndexValid(r-1, c+1))
+				if(true == isIndexValid(r-1, c+1))
 				{
 					Coordinate tempAdj = new Coordinate(r-1, c+1);
 					if(!(minesList.contains(tempAdj)))
 					{
 						minesList.add(tempAdj);
-						mineField[r-1][c+1] = GetMineChar();
+						mineField[r-1][c+1] = getMineChar();
 
 						if(minesList.size() == numMines)
 							break;						
 					}			
 				}
 				// index to the right
-				if(true == IsIndexValid(r, c+1))
+				if(true == isIndexValid(r, c+1))
 				{
 					Coordinate tempAdj = new Coordinate(r, c+1);
 					if(!(minesList.contains(tempAdj)))
 					{
 						minesList.add(tempAdj);
-						mineField[r][c+1] = GetMineChar();
+						mineField[r][c+1] = getMineChar();
 
 						if(minesList.size() == numMines)
 							break;						
 					}			
 				}
 				// index to the right and down one
-				if(true == IsIndexValid(r+1, c+1))
+				if(true == isIndexValid(r+1, c+1))
 				{
 					Coordinate tempAdj = new Coordinate(r+1, c+1);
 					if(!(minesList.contains(tempAdj)))
 					{
 						minesList.add(tempAdj);
-						mineField[r+1][c+1] = GetMineChar();
+						mineField[r+1][c+1] = getMineChar();
 
 						if(minesList.size() == numMines)
 							break;						
 					}			
 				}			
 				// index below
-				if(true == IsIndexValid(r+1, c))
+				if(true == isIndexValid(r+1, c))
 				{
 					Coordinate tempAdj = new Coordinate(r+1, c);
 					if(!(minesList.contains(tempAdj)))
 					{
 						minesList.add(tempAdj);
-						mineField[r+1][c] = GetMineChar();
+						mineField[r+1][c] = getMineChar();
 
 						if(minesList.size() == numMines)
 							break;						
 					}					
 				}				
 				// index below and to the left one
-				if(true == IsIndexValid(r+1, c-1))
+				if(true == isIndexValid(r+1, c-1))
 				{
 					Coordinate tempAdj = new Coordinate(r+1, c-1);
 					if(!(minesList.contains(tempAdj)))
 					{
 						minesList.add(tempAdj);
-						mineField[r+1][c-1] = GetMineChar();
+						mineField[r+1][c-1] = getMineChar();
 
 						if(minesList.size() == numMines)
 							break;						
@@ -305,49 +305,49 @@ public class Generator
 				int numMinesSurrounding = 0;
 
 				// index to the left
-				if(true == IsIndexValid(r, c-1))
+				if(true == isIndexValid(r, c-1))
 				{
 					if(mineChar == mineField[r][c-1])
 						++numMinesSurrounding;
 				}
 				// index to the left and up one
-				if(true == IsIndexValid(r-1, c-1))
+				if(true == isIndexValid(r-1, c-1))
 				{
 					if(mineChar == mineField[r-1][c-1])
 						++numMinesSurrounding;					
 				}
 				// index above
-				if(true == IsIndexValid(r-1, c))
+				if(true == isIndexValid(r-1, c))
 				{
 					if(mineChar == mineField[r-1][c])
 						++numMinesSurrounding;					
 				}
 				// index above and to the right one
-				if(true == IsIndexValid(r-1, c+1))
+				if(true == isIndexValid(r-1, c+1))
 				{
 					if(mineChar == mineField[r-1][c+1])
 						++numMinesSurrounding;					
 				}
 				// index to the right
-				if(true == IsIndexValid(r, c+1))
+				if(true == isIndexValid(r, c+1))
 				{
 					if(mineChar == mineField[r][c+1])
 						++numMinesSurrounding;					
 				}
 				// index to the right and down one
-				if(true == IsIndexValid(r+1, c+1))
+				if(true == isIndexValid(r+1, c+1))
 				{
 					if(mineChar == mineField[r+1][c+1])
 						++numMinesSurrounding;					
 				}			
 				// index below
-				if(true == IsIndexValid(r+1, c))
+				if(true == isIndexValid(r+1, c))
 				{
 					if(mineChar == mineField[r+1][c])
 						++numMinesSurrounding;					
 				}				
 				// index below and to the left one
-				if(true == IsIndexValid(r+1, c-1))
+				if(true == isIndexValid(r+1, c-1))
 				{
 					if(mineChar == mineField[r+1][c-1])
 						++numMinesSurrounding;					
@@ -379,11 +379,11 @@ public class Generator
 
 		while(minesList.size() != numMines)
 		{
-			Coordinate temp = new Coordinate(GetRandomInt(0, maxRowIndex), GetRandomInt(0, maxColIndex));
+			Coordinate temp = new Coordinate(getRandomInt(0, maxRowIndex), getRandomInt(0, maxColIndex));
 			if(!(minesList.contains(temp)))
 			{
 				minesList.add(temp);
-				mineField[temp.getRow()][temp.getCol()] = GetMineChar();
+				mineField[temp.getRow()][temp.getCol()] = getMineChar();
 			}
 		}		
 
@@ -401,49 +401,49 @@ public class Generator
 				int numMinesSurrounding = 0;
 
 				// index to the left
-				if(true == IsIndexValid(r, c-1))
+				if(true == isIndexValid(r, c-1))
 				{
 					if(mineChar == mineField[r][c-1])
 						++numMinesSurrounding;
 				}
 				// index to the left and up one
-				if(true == IsIndexValid(r-1, c-1))
+				if(true == isIndexValid(r-1, c-1))
 				{
 					if(mineChar == mineField[r-1][c-1])
 						++numMinesSurrounding;					
 				}
 				// index above
-				if(true == IsIndexValid(r-1, c))
+				if(true == isIndexValid(r-1, c))
 				{
 					if(mineChar == mineField[r-1][c])
 						++numMinesSurrounding;					
 				}
 				// index above and to the right one
-				if(true == IsIndexValid(r-1, c+1))
+				if(true == isIndexValid(r-1, c+1))
 				{
 					if(mineChar == mineField[r-1][c+1])
 						++numMinesSurrounding;					
 				}
 				// index to the right
-				if(true == IsIndexValid(r, c+1))
+				if(true == isIndexValid(r, c+1))
 				{
 					if(mineChar == mineField[r][c+1])
 						++numMinesSurrounding;					
 				}
 				// index to the right and down one
-				if(true == IsIndexValid(r+1, c+1))
+				if(true == isIndexValid(r+1, c+1))
 				{
 					if(mineChar == mineField[r+1][c+1])
 						++numMinesSurrounding;					
 				}			
 				// index below
-				if(true == IsIndexValid(r+1, c))
+				if(true == isIndexValid(r+1, c))
 				{
 					if(mineChar == mineField[r+1][c])
 						++numMinesSurrounding;					
 				}				
 				// index below and to the left one
-				if(true == IsIndexValid(r+1, c-1))
+				if(true == isIndexValid(r+1, c-1))
 				{
 					if(mineChar == mineField[r+1][c-1])
 						++numMinesSurrounding;					
@@ -476,61 +476,61 @@ public class Generator
 		while(minesList.size() != numMines)
 		{
 			int r,c;
-			Coordinate temp = new Coordinate(r = GetRandomInt(0, maxRowIndex), c = GetRandomInt(0, maxColIndex));
+			Coordinate temp = new Coordinate(r = getRandomInt(0, maxRowIndex), c = getRandomInt(0, maxColIndex));
 
 			if(!(minesList.contains(temp)))
 			{
 				// index to the left
-				if(true == IsIndexValid(r, c-1))
+				if(true == isIndexValid(r, c-1))
 				{
 					if(mineChar == mineField[r][c-1])
 						continue;
 				}
 				// index to the left and up one
-				if(true == IsIndexValid(r-1, c-1))
+				if(true == isIndexValid(r-1, c-1))
 				{
 					if(mineChar == mineField[r-1][c-1])
 						continue;					
 				}
 				// index above
-				if(true == IsIndexValid(r-1, c))
+				if(true == isIndexValid(r-1, c))
 				{
 					if(mineChar == mineField[r-1][c])
 						continue;			
 				}
 				// index above and to the right one
-				if(true == IsIndexValid(r-1, c+1))
+				if(true == isIndexValid(r-1, c+1))
 				{
 					if(mineChar == mineField[r-1][c+1])
 						continue;					
 				}
 				// index to the right
-				if(true == IsIndexValid(r, c+1))
+				if(true == isIndexValid(r, c+1))
 				{
 					if(mineChar == mineField[r][c+1])
 						continue;					
 				}
 				// index to the right and down one
-				if(true == IsIndexValid(r+1, c+1))
+				if(true == isIndexValid(r+1, c+1))
 				{
 					if(mineChar == mineField[r+1][c+1])
 						continue;					
 				}			
 				// index below
-				if(true == IsIndexValid(r+1, c))
+				if(true == isIndexValid(r+1, c))
 				{
 					if(mineChar == mineField[r+1][c])
 						continue;					
 				}				
 				// index below and to the left one
-				if(true == IsIndexValid(r+1, c-1))
+				if(true == isIndexValid(r+1, c-1))
 				{
 					if(mineChar == mineField[r+1][c-1])
 						continue;					
 				}					
 				
 				minesList.add(temp);
-				mineField[temp.getRow()][temp.getCol()] = GetMineChar();
+				mineField[temp.getRow()][temp.getCol()] = getMineChar();
 			}
 		}		
 
@@ -548,49 +548,49 @@ public class Generator
 				int numMinesSurrounding = 0;
 
 				// index to the left
-				if(true == IsIndexValid(r, c-1))
+				if(true == isIndexValid(r, c-1))
 				{
 					if(mineChar == mineField[r][c-1])
 						++numMinesSurrounding;
 				}
 				// index to the left and up one
-				if(true == IsIndexValid(r-1, c-1))
+				if(true == isIndexValid(r-1, c-1))
 				{
 					if(mineChar == mineField[r-1][c-1])
 						++numMinesSurrounding;					
 				}
 				// index above
-				if(true == IsIndexValid(r-1, c))
+				if(true == isIndexValid(r-1, c))
 				{
 					if(mineChar == mineField[r-1][c])
 						++numMinesSurrounding;					
 				}
 				// index above and to the right one
-				if(true == IsIndexValid(r-1, c+1))
+				if(true == isIndexValid(r-1, c+1))
 				{
 					if(mineChar == mineField[r-1][c+1])
 						++numMinesSurrounding;					
 				}
 				// index to the right
-				if(true == IsIndexValid(r, c+1))
+				if(true == isIndexValid(r, c+1))
 				{
 					if(mineChar == mineField[r][c+1])
 						++numMinesSurrounding;					
 				}
 				// index to the right and down one
-				if(true == IsIndexValid(r+1, c+1))
+				if(true == isIndexValid(r+1, c+1))
 				{
 					if(mineChar == mineField[r+1][c+1])
 						++numMinesSurrounding;					
 				}			
 				// index below
-				if(true == IsIndexValid(r+1, c))
+				if(true == isIndexValid(r+1, c))
 				{
 					if(mineChar == mineField[r+1][c])
 						++numMinesSurrounding;					
 				}				
 				// index below and to the left one
-				if(true == IsIndexValid(r+1, c-1))
+				if(true == isIndexValid(r+1, c-1))
 				{
 					if(mineChar == mineField[r+1][c-1])
 						++numMinesSurrounding;					
@@ -633,7 +633,7 @@ public class Generator
 				char temp = st.nextToken().trim().charAt(0);
 				mineField[r][c] = temp;
 
-				if(temp == GetMineChar())
+				if(temp == getMineChar())
 				{
 					minesList.add(new Coordinate(r,c));
 					++numMinesDetected;
@@ -659,49 +659,49 @@ public class Generator
 				int numMinesSurrounding = 0;
 
 				// index to the left
-				if(true == IsIndexValid(r, c-1))
+				if(true == isIndexValid(r, c-1))
 				{
 					if(mineChar == mineField[r][c-1])
 						++numMinesSurrounding;
 				}
 				// index to the left and up one
-				if(true == IsIndexValid(r-1, c-1))
+				if(true == isIndexValid(r-1, c-1))
 				{
 					if(mineChar == mineField[r-1][c-1])
 						++numMinesSurrounding;					
 				}
 				// index above
-				if(true == IsIndexValid(r-1, c))
+				if(true == isIndexValid(r-1, c))
 				{
 					if(mineChar == mineField[r-1][c])
 						++numMinesSurrounding;					
 				}
 				// index above and to the right one
-				if(true == IsIndexValid(r-1, c+1))
+				if(true == isIndexValid(r-1, c+1))
 				{
 					if(mineChar == mineField[r-1][c+1])
 						++numMinesSurrounding;					
 				}
 				// index to the right
-				if(true == IsIndexValid(r, c+1))
+				if(true == isIndexValid(r, c+1))
 				{
 					if(mineChar == mineField[r][c+1])
 						++numMinesSurrounding;					
 				}
 				// index to the right and down one
-				if(true == IsIndexValid(r+1, c+1))
+				if(true == isIndexValid(r+1, c+1))
 				{
 					if(mineChar == mineField[r+1][c+1])
 						++numMinesSurrounding;					
 				}			
 				// index below
-				if(true == IsIndexValid(r+1, c))
+				if(true == isIndexValid(r+1, c))
 				{
 					if(mineChar == mineField[r+1][c])
 						++numMinesSurrounding;					
 				}				
 				// index below and to the left one
-				if(true == IsIndexValid(r+1, c-1))
+				if(true == isIndexValid(r+1, c-1))
 				{
 					if(mineChar == mineField[r+1][c-1])
 						++numMinesSurrounding;					
@@ -718,7 +718,7 @@ public class Generator
 	}
 
 	// private methods
-	private int GetRandomInt(int start, int finish)
+	private int getRandomInt(int start, int finish)
 	{
 		int n = finish - start + 1;
 		int i = randomNumberGenerator.nextInt() % n;
@@ -772,37 +772,37 @@ public class Generator
 		return temp;
 	}	
 
-	public char[][] GetMineField()
+	public char[][] getMineField()
 	{
 		return mineField;
 	}
 
-	public ArrayList<Coordinate> GetMinesListOfCoordinates()
+	public ArrayList<Coordinate> getMinesListOfCoordinates()
 	{
 		return minesList;
 	}
 
-	public char GetMineChar()
+	public char getMineChar()
 	{
 		return mineChar;
 	}
 
-	public int GetNumRows()
+	public int getNumRows()
 	{
 		return numRows;
 	}
 
-	public int GetNumCols()
+	public int getNumCols()
 	{
 		return numCols;
 	}
 
-	public int GetNumMines()
+	public int getNumMines()
 	{
 		return numMines;
 	}
 
-	public boolean IsIndexValid(int row, int col)
+	public boolean isIndexValid(int row, int col)
 	{
 		int maxRowIndex = numRows-1;	// base 0
 		int maxColIndex = numCols-1;	// base 0
@@ -921,11 +921,6 @@ public class Generator
 				System.out.println("");
 			}				
 		}		
-	}
-	
-	public char[][] getMineField()
-	{
-		return mineField;
 	}
 
 	public static void main(String[] args) 
