@@ -156,6 +156,11 @@ public class MineFrame extends JFrame
 	
 	public void generateGame()
 	{
+		GenerateParameters p = new GenerateParameters(this);
+		int rows = p.getNumRows();
+		int cols = p.getNumCols();
+		int gameType = p.getGameType();
+		
 		ImageIcon blank = new ImageIcon("img/j0.gif");
 		ImageIcon one = new ImageIcon("img/j1.gif");
 		ImageIcon two = new ImageIcon("img/j2.gif");
@@ -169,14 +174,14 @@ public class MineFrame extends JFrame
 		ImageIcon unopened = new ImageIcon("img/j10.gif");
 		ImageIcon flag = new ImageIcon("img/j11.gif");
 		
-		Generator g = new Generator(20,20,2);
+		Generator g = new Generator(rows,cols,gameType);
 		char[][] minefield = g.getMineField();
 		
-		int rows = minefield.length;
-		int cols = minefield[0].length;
+		/* rows = minefield.length;
+		int cols = minefield[0].length;*/
 		
 		JPanel contentPane = new JPanel();
-        contentPane.setPreferredSize(new Dimension(rows*16, cols*16));
+        contentPane.setPreferredSize(new Dimension(cols*15,rows*15));
 
 		
 
@@ -207,6 +212,8 @@ public class MineFrame extends JFrame
 						contentPane.add(new JLabel(eight));
 					else if(minefield[r][c] == 'X')
 						contentPane.add(new JLabel(mine));
+						
+					//contentPane.add(new JLabel(unopened));
 						//contentPane.add(new JButton(minefield[r][c] + " "));
 				}
 			}
