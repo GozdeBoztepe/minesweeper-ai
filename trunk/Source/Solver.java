@@ -121,35 +121,35 @@ public class Solver {
 				System.exit(0);
 			} 
 			else if (value == '0') {
-				if (IsIndexValid(row, col+1)) {
+				if (isIndexValid(row, col+1)) {
 					//System.out.println("recurse right");
 					uncover(row, col+1); // right
 				}
-				if (IsIndexValid(row, col-1)) {
+				if (isIndexValid(row, col-1)) {
 					//System.out.println("recurse left");
 					uncover(row,col-1); // left
 				}
-				if (IsIndexValid(row+1, col+1)) {
+				if (isIndexValid(row+1, col+1)) {
 					//System.out.println("recurse down right");
 					uncover(row+1, col+1); // down right
 				}
-				if (IsIndexValid(row+1, col-1)) {
+				if (isIndexValid(row+1, col-1)) {
 					//System.out.println("recurse down left");
 					uncover(row+1, col-1); // down left
 				}
-				if (IsIndexValid(row+1, col)) {
+				if (isIndexValid(row+1, col)) {
 					//System.out.println("recurse down");
 					uncover(row+1, col); // down	
 				}
-				if (IsIndexValid(row-1, col+1)) {
+				if (isIndexValid(row-1, col+1)) {
 					//System.out.println("recurse up right");
 					uncover(row-1, col+1); // up right
 				}
-				if (IsIndexValid(row-1, col-1)) {
+				if (isIndexValid(row-1, col-1)) {
 					//System.out.println("recurse up left");
 					uncover(row-1, col-1); // up left
 				}
-				if (IsIndexValid(row-1, col)) {
+				if (isIndexValid(row-1, col)) {
 					//System.out.println("recurse up");
 					uncover(row-1, col); // up
 				}
@@ -177,8 +177,8 @@ public class Solver {
 	}
 
 	public void randomMove() {
-		int x = GetRandomInt(0, numRows - 1);
-		int y = GetRandomInt(0, numCols - 1);
+		int x = getRandomInt(0, numRows - 1);
+		int y = getRandomInt(0, numCols - 1);
 		uncover(x,y);
 	}
 	
@@ -288,7 +288,7 @@ public class Solver {
 //        }
 	}
 
-	public boolean IsIndexValid(int row, int col)
+	public boolean isIndexValid(int row, int col)
 	{
 		int maxRowIndex = numRows-1;	// base 0
 		int maxColIndex = numCols-1;	// base 0
@@ -299,7 +299,7 @@ public class Solver {
 			return false;
 	}
 
-	private int GetRandomInt(int start, int finish)
+	private int getRandomInt(int start, int finish)
 	{
 		int n = finish - start + 1;
 		int i = randomNumberGenerator.nextInt() % n;
@@ -357,7 +357,7 @@ public class Solver {
 		Generator g = new Generator(1);
 		//Generator g = new Generator("sampleGame.txt");
 
-		Solver s = new Solver(g.GetMineField(), g.GetNumRows(), g.GetNumCols(), g.GetMinesListOfCoordinates());
+		Solver s = new Solver(g.getMineField(), g.getNumRows(), g.getNumCols(), g.getMinesListOfCoordinates());
 		g.PrintMineField();
 
 		s.play();
