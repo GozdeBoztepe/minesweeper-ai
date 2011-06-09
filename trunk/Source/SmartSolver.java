@@ -194,10 +194,7 @@ public class SmartSolver {
 	 */
 	public void iteration() {
 		count ++;
-		// make sure the board is not solved or failed
-//		if (board.isSolved() || board.isFailed()) {
-//			throw new IllegalStateException("The board is already solved or failed.");
-//		}
+
 		// find all constraints
 		if ( ! inspected) {
 			inspect();
@@ -234,7 +231,7 @@ public class SmartSolver {
             	}
             }
         }
-		
+			
 		if (solver.minesList.size() == n) {
 			for(int i = 0; i < r; i++) {
 	            for(int j = 0; j < c; j++) {
@@ -294,5 +291,27 @@ public class SmartSolver {
         }
 		
 		return solvedField;
+	}
+
+	public void update() {
+		int r = numRows;
+		int c = numCols;
+		
+		problem = new byte[r][c];
+		
+		for(int i = 0; i < r; i++) {
+            for(int j = 0; j < c; j++) {
+            	byte x;
+            	if (solver.problem[i][j] == 10) {
+            		x = 10;
+            	} else if (solver.problem[i][j] == 9) {
+            		x = 9;
+            	} else {
+            		x = (byte) solver.problem[i][j];
+            	}
+            	problem[i][j] = x;
+            }
+        }
+		
 	}
 }

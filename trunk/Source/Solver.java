@@ -176,9 +176,9 @@ public class Solver {
 			System.out.println("Flagged (" + row + ", " + col + ")");
 			printCurrentMap();
 		} else {
-			flagList.remove(flag);
-			problem[row][col] = U;
-			System.out.println("Unflagged (" + row + ", " + col + ")");
+			//flagList.remove(flag);
+			//problem[row][col] = U;
+			//System.out.println("Unflagged (" + row + ", " + col + ")");
 			printCurrentMap();
 		}
 
@@ -323,6 +323,34 @@ public class Solver {
 		else
 			return false;
 	}
+	
+	public boolean isSolved() {
+		for(int i = 0; i < numRows; i++) {
+            for(int j = 0; j < numCols; j++) {
+            	if (problem[i][j] == U) {
+            		return false;
+            	}
+            }
+        }
+		
+		if (flagList.size() != minesList.size()) {
+			return false;
+		}
+		
+		for (Coordinate x : flagList) {
+			if (!minesList.contains(x)) {
+				return false;
+			}
+		}
+		
+		for (Coordinate x : minesList) {
+			if (!flagList.contains(x)) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
 
 	private int getRandomInt(int start, int finish)
 	{
@@ -346,7 +374,8 @@ public class Solver {
 			System.out.println("Press '4' to use the random solver");
 			System.out.println("Press '5' to print solution");
 			System.out.println("Press '6' to use the smart solver");
-			System.out.println("Press '7' to use the brute force solver");
+			System.out.println("Press '7' to use the partial solver");
+			System.out.println("Press '8' to use the brute force solver");
 			System.out.print("Select Choice: ");
 			int choice = Integer.parseInt(reader.readLine());
 
@@ -374,12 +403,27 @@ public class Solver {
 			} else if (choice == 6) {
 				SmartSolver s = new SmartSolver(this, problem, minefield, numRows, numCols);
 				long T1, T2, T;
-				T1 = System.currentTimeMillis();
+				T1 = System.currentTimeMillis();	
+				int[][] prev = new int[numRows][numCols];
 				s.iteration();
+				int[][] cur = s.getIntMinefield();
+				while (prev.equals(cur)) {
+					prev = cur;
+					s.update();
+					s.iteration();
+					cur = s.getIntMinefield();
+				}
 				T2 = System.currentTimeMillis();
 				T = T2 - T1;
 				System.out.println("\n\t*** Execution time = " + T + " ms");
-				//s.getIntMinefield();
+				if (isSolved()) {
+					System.out.println("Correct Solution!");
+				} else {
+					System.out.println("Incorrect or Incomplete Solution!");
+				}
+			} else if (choice == 7) {
+				SmartSolver s = new SmartSolver(this, problem, minefield, numRows, numCols);
+				s.iteration();
 			} else {
 				long T1, T2, T;
 				T1 = System.currentTimeMillis();
@@ -392,7 +436,7 @@ public class Solver {
 	}
 
 	public static void main(String[] args) throws NumberFormatException, IOException {
-		Generator g = new Generator(18,18,10,3);
+		Generator g = new Generator(8,8,15,1);
 		//Generator g = new Generator("sampleGame.txt");
 
 		Solver s = new Solver(g.getMineField(), g.getNumRows(), g.getNumCols(), g.getMinesListOfCoordinates());
