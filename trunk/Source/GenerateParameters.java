@@ -10,6 +10,7 @@ public class GenerateParameters extends JDialog
     private static final long serialVersionUID = 6001L;
     JTextField numRows;
     JTextField numCols;
+    JTextField numMines;
     JTextField gameType;
 		JButton okButton;
 		JButton cancelButton;
@@ -20,7 +21,7 @@ public class GenerateParameters extends JDialog
 
 		JPanel contentPane = new JPanel();
 		contentPane.setLayout(new FlowLayout());
-		setSize(300, 110);
+		setSize(340, 120);
 
 		JLabel label1 = new JLabel("Rows:");
     contentPane.add(label1);
@@ -32,10 +33,18 @@ public class GenerateParameters extends JDialog
     numCols = new JTextField("10");
     contentPane.add(numCols);
     
-    JLabel label3 = new JLabel("Game Type:");
+    JLabel label3 = new JLabel("Mines:");
     contentPane.add(label3);
+    numMines = new JTextField("10");
+    contentPane.add(numMines);
+    
+    JLabel label4 = new JLabel("Game Type:");
+    contentPane.add(label4);
     gameType = new JTextField("2");
     contentPane.add(gameType);
+    
+    JLabel label5 = new JLabel("Game Type 3 has a set number of mines (18%)");
+    contentPane.add(label5);
 
 		okButton = new JButton("OK");
 		cancelButton = new JButton("Cancel");
@@ -61,6 +70,11 @@ public class GenerateParameters extends JDialog
 	public int getNumCols()
 	{
 	    return Integer.parseInt(numCols.getText());
+	}
+	
+	public int getNumMines()
+	{
+	    return Integer.parseInt(numMines.getText());
 	}
 	
 	public int getGameType()

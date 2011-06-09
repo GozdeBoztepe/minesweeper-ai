@@ -159,6 +159,7 @@ public class MineFrame extends JFrame
 		GenerateParameters p = new GenerateParameters(this);
 		int rows = p.getNumRows();
 		int cols = p.getNumCols();
+		int mines = p.getNumMines();
 		int gameType = p.getGameType();
 		
 		ImageIcon blank = new ImageIcon("img/j0.gif");
@@ -174,7 +175,19 @@ public class MineFrame extends JFrame
 		ImageIcon unopened = new ImageIcon("img/j10.gif");
 		ImageIcon flag = new ImageIcon("img/j11.gif");
 		
-		Generator g = new Generator(rows,cols,gameType);
+		//cleanse input
+		if (gameType < 1 || gameType > 3)
+			gameType = 2;
+		if (mines > rows*cols || mines < 0)
+			mines = (int)(rows*cols*.25);
+		
+		Generator g;
+		if(gameType == 3)
+			g =  new Generator(rows,cols,gameType);
+		else
+			g =  new Generator(rows,cols,mines,gameType);
+		
+		
 		char[][] minefield = g.getMineField();
 		
 		/* rows = minefield.length;
