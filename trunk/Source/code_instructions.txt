@@ -8,6 +8,6 @@ How to run:
 
 2) To generate boards to show on the GUI: run Minesweeper's main class
 
-3) To run the solver without the GUI:
+3) To run the solver without the GUI: run Solver's main class and use the console options
 
 4) To run the solver with the GUI:
