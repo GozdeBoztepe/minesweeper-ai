@@ -160,10 +160,10 @@ public class Generator
 		
 		minesList = new ArrayList<Coordinate>();
 		mineField = new char[numRows][numCols];	
-		this.numMines = numMines;
 
 		if(gameMode == 1)
 		{
+			this.numMines = numMines;
 			if(-1 == FillMineFieldWithClusters())
 			{
 				System.out.println("Error in FillMineFieldWithClusters");
@@ -172,17 +172,22 @@ public class Generator
 		}
 		else if (gameMode == 2)
 		{
+			this.numMines = numMines;
 			if(-1 == FillMineFieldRandomly())
 			{
 				System.out.println("Error in FillMineFieldRandomly");
 				System.exit(1);
 			}			
 		}		
-		else if (gameMode == 3)
-		{
-			System.out.println("Please specify easy (1) or medium (2)");
-			System.exit(1);
-		}
+		else if(gameMode == 3)
+		{	
+			this.numMines = (int)(numRows*numCols*(SCATTERED_FIELD_MINE_RATIO));
+			if(-1 == FillMineFieldWithScatters())
+			{
+				System.out.println("Error in FillMineFieldWithScatters");
+				System.exit(1);
+			}		
+		}	
 	}	
 	
 	public int FillMineFieldWithClusters()
@@ -966,8 +971,9 @@ public class Generator
 		
 		//Generator g = new Generator(8, 5, 2);
 		
-		//Generator g = new Generator(5, 10, 20, 1);
-		Generator g = new Generator(5, 10, 12, 2);
+		Generator g = new Generator(5, 10, 20, 1);
+		//Generator g = new Generator(5, 10, 12, 2);
+		//Generator g = new Generator(5,10,50, 3);
 
 		g.PrintMineField();			
 	} // end main
