@@ -94,6 +94,15 @@ public class Generator
 				System.exit(1);
 			}		
 		}
+		else
+		{
+			this.numMines = (int)(numRows*numCols*(RANDOM_FIELD_MINE_RATIO));
+			if(-1 == FillMineFieldRandomly())
+			{
+				System.out.println("Error in FillMineFieldRandomly");
+				System.exit(1);
+			}			
+		}		
 	}	
 
 	// read mine configuration from file constructor
@@ -150,6 +159,15 @@ public class Generator
 				System.out.println("Error in FillMineFieldWithScatters");
 				System.exit(1);
 			}		
+		}
+		else
+		{
+			this.numMines = (int)(numRows*numCols*(RANDOM_FIELD_MINE_RATIO));
+			if(-1 == FillMineFieldRandomly())
+			{
+				System.out.println("Error in FillMineFieldRandomly");
+				System.exit(1);
+			}			
 		}		
 	}
 	
@@ -188,6 +206,15 @@ public class Generator
 				System.exit(1);
 			}		
 		}	
+		else
+		{
+			this.numMines = numMines;
+			if(-1 == FillMineFieldRandomly())
+			{
+				System.out.println("Error in FillMineFieldRandomly");
+				System.exit(1);
+			}			
+		}		
 	}	
 	
 	public int FillMineFieldWithClusters()
@@ -971,9 +998,11 @@ public class Generator
 		
 		//Generator g = new Generator(8, 5, 2);
 		
-		Generator g = new Generator(5, 10, 20, 1);
+		//Generator g = new Generator(5, 10, 20, 1);
 		//Generator g = new Generator(5, 10, 12, 2);
 		//Generator g = new Generator(5,10,50, 3);
+		
+		Generator g = new Generator(5,10,10,4);
 
 		g.PrintMineField();			
 	} // end main
