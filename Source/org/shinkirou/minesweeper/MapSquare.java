@@ -6,7 +6,7 @@ package org.shinkirou.minesweeper;
 
 /**
  * Represents a coordinate.
- * @author SHiNKiROU
+ * @author SHiNKiROU 
  */
 public class MapSquare implements Cloneable, Comparable<MapSquare> {
 
