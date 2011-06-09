@@ -33,7 +33,7 @@ public class Solver {
 	
 	// JaCoP
 	Store store;
-	public static int U = 10; // Unknown Square
+	public static int U = -1; // Unknown Square
     IntVar[][] map; // 0 through 8
     IntVar[][] mines; // MINE or NOT MINE
     int[][] problem = null;
@@ -174,11 +174,10 @@ public class Solver {
 			flagList.add(flag);
 			problem[row][col] = 9;
 			System.out.println("Flagged (" + row + ", " + col + ")");
+			store.impose(new XeqC(mines[row][col], 1)); // Add Constraint
 			printCurrentMap();
 		} else {
-			//flagList.remove(flag);
-			//problem[row][col] = U;
-			//System.out.println("Unflagged (" + row + ", " + col + ")");
+			System.out.println("Already Flagged (" + row + ", " + col + ")");
 			printCurrentMap();
 		}
 
@@ -271,8 +270,6 @@ public class Solver {
 			System.out.println("");
 		}		
 		System.out.println("");
-		
-		printProblem();
 	}
 	
 	public void printProblem() {
@@ -362,6 +359,18 @@ public class Solver {
 
 		return start + i;
 	}
+	
+	public void smartSolve(SmartSolver s) {
+		int[][] prev = new int[numRows][numCols];
+		s.iteration();
+		int[][] cur = s.getIntMinefield();
+		while (prev.equals(cur)) {
+			prev = cur;
+			s.update();
+			s.iteration();
+			cur = s.getIntMinefield();
+		}
+	}
 
 	void play() throws NumberFormatException, IOException {
 		BufferedReader reader;
@@ -404,23 +413,15 @@ public class Solver {
 				SmartSolver s = new SmartSolver(this, problem, minefield, numRows, numCols);
 				long T1, T2, T;
 				T1 = System.currentTimeMillis();	
-				int[][] prev = new int[numRows][numCols];
-				s.iteration();
-				int[][] cur = s.getIntMinefield();
-				while (prev.equals(cur)) {
-					prev = cur;
-					s.update();
-					s.iteration();
-					cur = s.getIntMinefield();
+				smartSolve(s);
+				while (!isSolved()) {
+					randomMove();
+					smartSolve(s);
 				}
+				System.out.println("CORRECT Solution!");
 				T2 = System.currentTimeMillis();
 				T = T2 - T1;
 				System.out.println("\n\t*** Execution time = " + T + " ms");
-				if (isSolved()) {
-					System.out.println("Correct Solution!");
-				} else {
-					System.out.println("Incorrect or Incomplete Solution!");
-				}
 			} else if (choice == 7) {
 				SmartSolver s = new SmartSolver(this, problem, minefield, numRows, numCols);
 				s.iteration();
@@ -436,8 +437,7 @@ public class Solver {
 	}
 
 	public static void main(String[] args) throws NumberFormatException, IOException {
-		Generator g = new Generator(8,8,15,1);
-		//Generator g = new Generator("sampleGame.txt");
+		Generator g = new Generator(15,15,10,4);
 
 		Solver s = new Solver(g.getMineField(), g.getNumRows(), g.getNumCols(), g.getMinesListOfCoordinates());
 		g.PrintMineField();
