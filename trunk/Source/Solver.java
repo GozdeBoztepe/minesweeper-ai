@@ -1,14 +1,11 @@
-// **************************************
-// Class: Solver.java
-// Code author: Allen Luo, David Nguyen
-// Last modified: 05/10/2011
-// **************************************
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Random;
+
 
 import JaCoP.constraints.Sum;
 import JaCoP.constraints.XeqC;
@@ -36,7 +33,7 @@ public class Solver {
 	
 	// JaCoP
 	Store store;
-	public static int U = -1; // Unknown Square
+	public static int U = 10; // Unknown Square
     IntVar[][] map; // 0 through 8
     IntVar[][] mines; // MINE or NOT MINE
     int[][] problem = null;
@@ -75,6 +72,15 @@ public class Solver {
                 map[i][j] = new IntVar(store, "g_" + i + "_" + j, -1, 8);
             }
         }
+        
+        ArrayList<IntVar> mineSum = new ArrayList<IntVar>();
+        for(int i = 0; i < r; i++) {
+            for(int j = 0; j < c; j++) {
+            	mineSum.add(mines[i][j]);
+            }
+        }
+        IntVar mineTotal = new IntVar(store, "mineTotal", minesList.size(), minesList.size());
+        store.impose(new Sum(mineSum, mineTotal));
 	}
 
 	public void propConstraints() {
@@ -158,7 +164,7 @@ public class Solver {
 			propConstraints();
 			System.out.println("Selected (" + row + ", " + col + "): " + value + "Problem: " + problem[row][col]);
 			printCurrentMap();
-			printProblem();
+			//printProblem();
 		}
 	} // end of uncover
 
@@ -166,10 +172,12 @@ public class Solver {
 		Coordinate flag = new Coordinate(row,col);
 		if (!flagList.contains(flag)) {
 			flagList.add(flag);
+			problem[row][col] = 9;
 			System.out.println("Flagged (" + row + ", " + col + ")");
 			printCurrentMap();
 		} else {
 			flagList.remove(flag);
+			problem[row][col] = U;
 			System.out.println("Unflagged (" + row + ", " + col + ")");
 			printCurrentMap();
 		}
@@ -193,11 +201,12 @@ public class Solver {
 		}  
 	}
 
-	public void solver(boolean recordSolutions) {
+	public void bruteSolver(boolean recordSolutions) {
 		
 	    SelectChoicePoint select = new SimpleMatrixSelect (mines, new SmallestDomain(), new IndomainMin());
 	    
 	    Search search = new DepthFirstSearch();
+	    //search.getSolutionListener().setSolutionLimit(1); // ??
 	    search.getSolutionListener().searchAll(true);
 	    search.getSolutionListener().recordSolutions(recordSolutions);        
 	    
@@ -262,6 +271,8 @@ public class Solver {
 			System.out.println("");
 		}		
 		System.out.println("");
+		
+		printProblem();
 	}
 	
 	public void printProblem() {
@@ -272,20 +283,34 @@ public class Solver {
             }
             System.out.println();
         }
-//		System.out.println("Problem MAP");
-//		for(int i = 0; i < numRows; i++) {
-//            for(int j = 0; j < numCols; j++) {
-//            	System.out.print(map[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
-//		System.out.println("Problem MINES");
-//		for(int i = 0; i < numRows; i++) {
-//            for(int j = 0; j < numCols; j++) {
-//            	System.out.print(mines[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
+	}
+	
+	public void printSolution() {
+		int[][] solution = new int[numRows][numCols];
+		for(int i = 0; i < numRows; i++) {
+            for(int j = 0; j < numCols; j++) {
+            	Coordinate x = new Coordinate(i,j);
+            	if (minesList.contains(x)) {
+            		solution[i][j] = 1;
+            		System.out.print("1 ");
+            	} else {
+            		solution[i][j] = 0;
+            		System.out.print("0 ");
+            	}
+            }
+            System.out.println();
+        }
+		
+		boolean correctSolution = true;
+		
+		for(int i = 0; i < numRows; i++) {
+            for(int j = 0; j < numCols; j++) {
+            	if (mines[i][j].value() != solution[i][j]) {
+            		correctSolution = false;
+            	}
+            }
+        }
+		System.out.println("Solution: " + correctSolution);
 	}
 
 	public boolean isIndexValid(int row, int col)
@@ -319,7 +344,9 @@ public class Solver {
 			System.out.println("Press '2' to flag a mine");
 			System.out.println("Press '3' to uncover a random square");
 			System.out.println("Press '4' to use the random solver");
-			System.out.println("Press '5' to use the brute force solver");
+			System.out.println("Press '5' to print solution");
+			System.out.println("Press '6' to use the smart solver");
+			System.out.println("Press '7' to use the brute force solver");
 			System.out.print("Select Choice: ");
 			int choice = Integer.parseInt(reader.readLine());
 
@@ -342,10 +369,21 @@ public class Solver {
 				randomMove();
 			} else if (choice == 4) {
 				randomSolver();
+			} else if (choice == 5) {
+				printSolution();
+			} else if (choice == 6) {
+				SmartSolver s = new SmartSolver(this, problem, minefield, numRows, numCols);
+				long T1, T2, T;
+				T1 = System.currentTimeMillis();
+				s.iteration();
+				T2 = System.currentTimeMillis();
+				T = T2 - T1;
+				System.out.println("\n\t*** Execution time = " + T + " ms");
+				//s.getIntMinefield();
 			} else {
 				long T1, T2, T;
 				T1 = System.currentTimeMillis();
-				solver(true);
+				bruteSolver(true);
 		        T2 = System.currentTimeMillis();
 				T = T2 - T1;
 				System.out.println("\n\t*** Execution time = " + T + " ms");
@@ -354,7 +392,7 @@ public class Solver {
 	}
 
 	public static void main(String[] args) throws NumberFormatException, IOException {
-		Generator g = new Generator(1);
+		Generator g = new Generator(18,18,10,3);
 		//Generator g = new Generator("sampleGame.txt");
 
 		Solver s = new Solver(g.getMineField(), g.getNumRows(), g.getNumCols(), g.getMinesListOfCoordinates());
