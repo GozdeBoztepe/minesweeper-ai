@@ -435,6 +435,39 @@ public class Solver {
 			}
 		}
 	}
+	
+	public void useSmartSolver()
+	{
+		SmartSolver s = new SmartSolver(this, problem, minefield, numRows, numCols);
+		long T1, T2, T;
+		T1 = System.currentTimeMillis();	
+		smartSolve(s);
+		while (!isSolved()) {
+			randomMove();
+			smartSolve(s);
+		}
+		System.out.println("CORRECT Solution!");
+		T2 = System.currentTimeMillis();
+		T = T2 - T1;
+	}
+	
+	public void usePartialSolver()
+	{
+		SmartSolver s = new SmartSolver(this, problem, minefield, numRows, numCols);
+		s.iteration();
+	}
+	
+	public void useBruteSolver()
+	{
+		long T1, T2, T;
+		T1 = System.currentTimeMillis();
+		bruteSolver(true);
+        T2 = System.currentTimeMillis();
+		T = T2 - T1;
+		System.out.println("\n\t*** Execution time = " + T + " ms");
+	}
+	
+	
 
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		Generator g = new Generator(15,15,10,4);
