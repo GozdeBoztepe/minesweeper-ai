@@ -153,6 +153,38 @@ public class Generator
 		}		
 	}
 	
+	public Generator(int numRows, int numCols, int numMines, int gameMode)
+	{
+		this.numRows = numRows;
+		this.numCols = numCols;
+		
+		minesList = new ArrayList<Coordinate>();
+		mineField = new char[numRows][numCols];	
+		this.numMines = numMines;
+
+		if(gameMode == 1)
+		{
+			if(-1 == FillMineFieldWithClusters())
+			{
+				System.out.println("Error in FillMineFieldWithClusters");
+				System.exit(1);
+			}		
+		}
+		else if (gameMode == 2)
+		{
+			if(-1 == FillMineFieldRandomly())
+			{
+				System.out.println("Error in FillMineFieldRandomly");
+				System.exit(1);
+			}			
+		}		
+		else if (gameMode == 3)
+		{
+			System.out.println("Please specify easy (1) or medium (2)");
+			System.exit(1);
+		}
+	}	
+	
 	public int FillMineFieldWithClusters()
 	{
 		// if there are no rows and no cols
@@ -932,7 +964,10 @@ public class Generator
 		//Generator g = new Generator(2);		// medium
 		//Generator g = new Generator(3);		// hard
 		
-		Generator g = new Generator(8, 5, 2);
+		//Generator g = new Generator(8, 5, 2);
+		
+		//Generator g = new Generator(5, 10, 20, 1);
+		Generator g = new Generator(5, 10, 12, 2);
 
 		g.PrintMineField();			
 	} // end main
