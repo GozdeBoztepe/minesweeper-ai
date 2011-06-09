@@ -16,7 +16,7 @@ public class SmartSolver {
 	private Set<Constraint> sets;
 	private int count;
 	private boolean inspected = false;
-	public static int U = 10;
+	public static int U = -1;
 	public Solver solver;
 
 	/**
@@ -39,7 +39,7 @@ public class SmartSolver {
 		for(int i = 0; i < r; i++) {
             for(int j = 0; j < c; j++) {
             	byte x;
-            	if (mfield[i][j] == 10) {
+            	if (mfield[i][j] == U) {
             		x = 10;
             	} else if (mfield[i][j] == 9) {
             		x = 9;
@@ -245,31 +245,7 @@ public class SmartSolver {
 		inspected = false;
 	}
 
-	public char[][] getMinefield() {
-		int r = numRows;
-		int c = numCols;
-		
-		char[][] solvedField = new char[r][c];
-		
-		for(int i = 0; i < r; i++) {
-            for(int j = 0; j < c; j++) {
-            	char x;
-            	if (problem[i][j] == 10) {
-            		x = '9';
-            	} else if (problem[i][j] == 9) {
-            		x = 'F';
-            	} else {
-            		x = Character.forDigit(problem[i][j],10);
-            	}
-            	solvedField[i][j] = x;
-            	System.out.print(solvedField[i][j] + " ");
-            }
-            System.out.println();
-        }
-		
-		return solvedField;
-	}
-	
+
 	public int[][] getIntMinefield() {
 		int r = numRows;
 		int c = numCols;
@@ -302,7 +278,7 @@ public class SmartSolver {
 		for(int i = 0; i < r; i++) {
             for(int j = 0; j < c; j++) {
             	byte x;
-            	if (solver.problem[i][j] == 10) {
+            	if (solver.problem[i][j] == U) {
             		x = 10;
             	} else if (solver.problem[i][j] == 9) {
             		x = 9;
