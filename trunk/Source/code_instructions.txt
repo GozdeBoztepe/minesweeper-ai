@@ -1,0 +1,13 @@
+Code Hierarchy:
+If using eclipse, all .java files should be in the src folder
+The img folder should be at the same level as the src folder for the GUI to work properly
+The libraries
+
+How to run:
+1) To generate boards to show on the console: run Generator's main class
+
+2) To generate boards to show on the GUI: run Minesweeper's main class
+
+3) To run the solver without the GUI:
+
+4) To run the solver with the GUI:
