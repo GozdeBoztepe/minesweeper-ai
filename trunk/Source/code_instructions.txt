@@ -1,13 +1,27 @@
 Code Hierarchy:
-If using eclipse, all .java files should be in the src folder
-The img folder should be at the same level as the src folder for the GUI to work properly
-The libraries
+If using eclipse, all .java files should be in the src folder.
+The "img" folder should be at the same level as the src folder for the GUI to work properly
+The org folder should be inside the src folder.
+The "JaCoP" library must be added to the link path ("Add External Archive").
 
-How to run:
-1) To generate boards to show on the console: run Generator's main class
+[Console Instructions]
 
-2) To generate boards to show on the GUI: run Minesweeper's main class
+1. Generating: run Generator's main class
 
-3) To run the solver without the GUI: run Solver's main class and use the console options
+2. Solving: run Solver's main class and use the console options
 
-4) To run the solver with the GUI:
+3. Playing: run Solver's main class and use the options
+
+[GUI Instructions]
+
+1. Run Minesweeper.java's main class.
+
+4. Generate a board first. Mine > Generate Game.
+
+3. Select Solve > Random Mode for initial move.
+
+4. From here, play by clicking unopened tiles. (Toggle Flag or Uncover mode from the Play menu).
+
+5. OR Solve the board in steps by selecting Solve > Smart Solve.
+
+6. Use a combination of playing, random, and solving for when the solver gets stuck.
