@@ -30,6 +30,7 @@ public class Solver {
 	public ArrayList<Coordinate> movesList = new ArrayList<Coordinate>();
 	public ArrayList<Coordinate> flagList = new ArrayList<Coordinate>();
 	private static Random randomNumberGenerator = new Random();
+	private SmartSolver smart = null;
 	
 	// JaCoP
 	Store store;
@@ -123,8 +124,8 @@ public class Solver {
 				System.out.println("Selected (" + row + ", " + col + "): " + value);
 				printCurrentMap();
 				GAME_OVER = true;
-				System.out.println("GAME OVER");
-				System.exit(0);
+				//System.out.println("GAME OVER");
+				//System.exit(0);
 			} 
 			else if (value == '0') {
 				if (isIndexValid(row, col+1)) {
@@ -438,17 +439,17 @@ public class Solver {
 	
 	public void useSmartSolver()
 	{
-		SmartSolver s = new SmartSolver(this, problem, minefield, numRows, numCols);
-		long T1, T2, T;
-		T1 = System.currentTimeMillis();	
-		smartSolve(s);
-		while (!isSolved()) {
-			randomMove();
-			smartSolve(s);
+		if(smart == null)
+			smart = new SmartSolver(this, problem, minefield, numRows, numCols);
+		
+		/*long T1, T2, T;
+		T1 = System.currentTimeMillis();*/	
+		if(!isSolved())
+		{
+			smartSolve(smart);
 		}
-		System.out.println("CORRECT Solution!");
-		T2 = System.currentTimeMillis();
-		T = T2 - T1;
+		
+		
 	}
 	
 	public void usePartialSolver()
@@ -467,7 +468,49 @@ public class Solver {
 		System.out.println("\n\t*** Execution time = " + T + " ms");
 	}
 	
-	
+	public char[][] getProblemMinefield()
+	{
+		int rows = problem.length;
+		int cols = problem[0].length;
+		
+		char[][] mf = new char[rows][cols];
+		
+		for(int r=0; r < rows; ++r)
+		{
+			for(int c=0; c < cols; ++c)
+			{
+				if(problem[r][c] == 0)
+					mf[r][c] = '0';
+				else if(problem[r][c] == 1)
+					mf[r][c] = '1';
+				else if(problem[r][c] == 2)
+					mf[r][c] = '2';
+				else if(problem[r][c] == 3)
+					mf[r][c] = '3';
+				else if(problem[r][c] == 4)
+					mf[r][c] = '4';
+				else if(problem[r][c] == 5)
+					mf[r][c] = '5';
+				else if(problem[r][c] == 6)
+					mf[r][c] = '6';
+				else if(problem[r][c] == 7)
+					mf[r][c] = '7';
+				else if(problem[r][c] == 8)
+					mf[r][c] = '8';
+				else if(problem[r][c] == 9)
+					mf[r][c] = 'F';
+				else if(problem[r][c] == 10)
+					mf[r][c] = 'X';
+				else if(problem[r][c] == -1)
+					mf[r][c] = ' ';
+				else
+					mf[r][c] = 'X';
+			}
+		}
+		
+		
+		return mf;
+	}
 
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		Generator g = new Generator(15,15,10,4);
